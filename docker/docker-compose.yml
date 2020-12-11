@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+  db:
+    image: mysql/mysql-server:5.7.32
+    hostname: trips_db
+    environment:
+        MYSQL_ROOT_PASSWORD: "secret"
+        MYSQL_DATABASE: "trips"
+        MYSQL_USER: "root"
+        MYSQL_PASSWORD: "secret"
+    ports:
+      - 3306:3306
+    volumes:
+      - ./db/import_data.sh:/data/import_data.sh
+      - ./db/ny_cab_data_cab_trip_data_full.sql:/data/ny_cab_data_cab_trip_data_full.sql
+
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    image: "trips-app"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - $HOME/.m2/repository:/root/.m2/repository
+      - ./..:/app
+    ports:
+      - 8081:8081
+    environment:
+      - db_url=jdbc:mysql://trips_db:3306/trips
+      - db_user=root
+      - db_password=secret
+    healthcheck:
+      test: curl -sS http://localhost:8081/ || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    links:
+      - "db:trips_db"
+
+  cli:
+    build:
+      context: ./cli
+      dockerfile: Dockerfile
+    image: "trips-cli"
+    depends_on:
+      db:
+        condition: service_healthy
+      app:
+        condition: service_healthy
+    volumes:
+      - $HOME/.m2/repository:/root/.m2/repository
+      - ./..:/app
+    environment:
+      - TRIPS_HOST=trips-app
+      - TRIPS_PORT=8081
+      - TRIPS_VERSION=v1
+    links:
+      - "app:trips-app"
