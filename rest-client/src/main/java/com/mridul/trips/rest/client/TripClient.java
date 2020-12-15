@@ -7,14 +7,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
-@Component
 public class TripClient extends AbstractClient {
     private static final Logger log = LoggerFactory.getLogger(TripClient.class);
 

@@ -1,4 +1,4 @@
-package com.mridul.trips.client;
+package com.mridul.trips.rest.client;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +24,7 @@ public class RestTemplateConfig {
         return mapper;
     }
 
-        @Bean
+    @Bean
     public RestTemplate restTemplate(){
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(jsonMapper());

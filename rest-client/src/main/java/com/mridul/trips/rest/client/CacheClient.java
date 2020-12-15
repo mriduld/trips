@@ -11,11 +11,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 
-@Component
 public class CacheClient extends AbstractClient {
     private static final Logger log = LoggerFactory.getLogger(TripClient.class);
 
-    @Autowired
     public CacheClient(String host, Integer port, Version version, RestTemplate restTemplate) {
         super(host, port, version, restTemplate);
     }

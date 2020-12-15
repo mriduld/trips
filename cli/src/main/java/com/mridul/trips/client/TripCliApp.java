@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import picocli.CommandLine;
 import picocli.CommandLine.IFactory;
 
-@SpringBootApplication(scanBasePackages = "com.mridul.trips.client")
+@SpringBootApplication(scanBasePackages = {"com.mridul.trips.client", "com.mridul.trips.rest.client"})
 public class TripCliApp implements CommandLineRunner, ExitCodeGenerator {
 
     private final IFactory factory;

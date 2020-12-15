@@ -1,13 +1,12 @@
 package com.mridul.trips.client;
 
 import com.mridul.trips.rest.client.CacheClient;
-import com.mridul.trips.rest.client.TripClient;
+import com.mridul.trips.rest.client.ClientFactory;
 import com.mridul.trips.rest.client.exception.CacheNotFoundException;
 import com.mridul.trips.rest.client.model.TripCount;
 import com.mridul.trips.rest.client.model.Version;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -31,7 +30,7 @@ abstract class HttpCommand {
     protected Version version;
 
     @Autowired
-    protected RestTemplate restTemplate;
+    protected ClientFactory clientFactory;
 }
 
 @Component
@@ -46,13 +45,11 @@ class TripCountCommand extends HttpCommand implements Runnable {
     @Option(arity = "0..1", names = "--ignore-cache", description = "Ignores cache", defaultValue = "false")
     private Boolean ignoreCache;
 
-    private TripClient tripClient(){
-        return new TripClient(host, port, version, restTemplate);
-    }
-
     @Override
     public void run() {
-        List<TripCount> tripCounts = tripClient().getTripCount(medallions, date, ignoreCache);
+        List<TripCount> tripCounts = clientFactory
+                .getTripClient(host, port, version)
+                .getTripCount(medallions, date, ignoreCache);
         for (TripCount tripCount : tripCounts) {
             System.out.printf(
               "[Medallion: %s, PickupDate: %s, Trips: %d]%n"
@@ -70,7 +67,7 @@ class InvalidateCacheCommand extends HttpCommand implements Runnable {
     private String cacheName;
 
     private CacheClient cacheClient(){
-        return new CacheClient(host, port, version, restTemplate);
+        return clientFactory.getCacheClient(host, port, version);
     }
 
     @Override
