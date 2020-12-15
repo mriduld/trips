@@ -29,7 +29,7 @@ services:
     ports:
       - 8081:8081
     environment:
-      - db_url=jdbc:mysql://trips_db:3306/trips
+      - db_url=jdbc:mysql://trips_db:3306/trips?serverTimezone=UTC
       - db_user=root
       - db_password=secret
     healthcheck:
